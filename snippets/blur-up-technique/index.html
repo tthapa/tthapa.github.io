@@ -1,0 +1,102 @@
+<html class="no-js">
+<head>
+    <title>OMG! Smooth image loading with blur-up technique</title>
+    <style>
+        html,body{
+            padding:0; margin:0; /* removing the padding margin around the page that nobody asked for */
+        }
+        .section {
+            height:100vh; /* full view port height */
+        }
+        .image-holder {
+            width:100%;
+            height:50%;
+            overflow: hidden;
+            position:relative;
+        }
+        .image-holder img {
+            object-fit: cover; /* this CSS3 property works but messes up in IE browsers, even in Edge */
+            width:100%;
+            height:100%;
+        }
+        .tiny-img {
+            filter:blur(50px);
+        }
+        .good-image {
+            position:absolute;
+            top:0;
+            left:0;
+            opacity:0;
+            transition: opacity 1s linear;
+        }
+        .good-image.loaded {
+            opacity:1;
+        }
+
+
+        /* Smoothing loading background images */
+        .bg-holder {
+            height: 50vh;
+            position:relative;
+        }
+        .bg-holder:before {
+            display:block;
+            content: '';
+            position: absolute;
+            top:0; bottom:0; left:0; right:0;
+            background: url(images/sm-lights.jpg);
+            background-size: cover;
+            background-position: center;
+            /* **/
+            filter: blur(50px);
+        }
+        .bg-holder:after {
+            display:block;
+            content: '';
+            position: absolute;
+            top:0; bottom:0; left:0; right:0;
+            transition: opacity 1s linear;
+            background: url(images/lights.jpg);
+            background-size: cover;
+            background-position: center;
+            opacity:0;
+        }
+        .bg-holder.loaded:after {
+            opacity:1;
+        }
+    </style>
+</head>
+<body>
+<div class="section section-1">
+    <div class="image-holder">
+        <img class="tiny-img" src="images/sm-woods.jpg" data-goodimage="images/woods.jpg">
+    </div>
+    <div class="bg-holder" data-goodBG="images/lights.jpg">
+    </div>
+</div>
+<script>
+    window.onload = function() {
+        var holder = document.querySelector('.image-holder');
+        var tiny = holder.children[0];
+        var goodImage = new Image();
+
+        goodImage.classList.add('good-image');
+        // append the image to the DOM;
+        holder.appendChild(goodImage);
+        goodImage.src = tiny.dataset.goodimage;
+
+        // add loaded class, once the image is, you know, loaded so we can do that transition thingy
+        goodImage.onload=function(){
+            goodImage.classList.add("loaded");
+        };
+
+        var bgholder = document.querySelector('.bg-holder');
+        var bgImage = new Image();
+        bgImage.src = bgholder.dataset.goodbg;
+        bgImage.onload = function() {
+            bgholder.classList.add("loaded");
+        };
+    }
+</script>
+</body>
+</html>
